@@ -8,6 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.raccoon.will.sapientia.core.Sapientia;
+
 @EventBusSubscriber(modid = Sapientia.MODID, value = Dist.CLIENT)
 public class GuiEvents {
 
