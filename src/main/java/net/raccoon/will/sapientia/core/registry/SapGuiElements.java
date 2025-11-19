@@ -2,48 +2,59 @@ package net.raccoon.will.sapientia.core.registry;
 
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.raccoon.will.sapientia.client.overlay.Anchor;
-import net.raccoon.will.sapientia.client.overlay.GuiManager;
-import net.raccoon.will.sapientia.client.overlay.element.GuiElement;
-import net.raccoon.will.sapientia.client.overlay.element.ItemElement;
-import net.raccoon.will.sapientia.client.overlay.element.SimpleElement;
-import net.raccoon.will.sapientia.client.overlay.element.TextElement;
+import net.raccoon.will.sapientia.client.gui.Anchor;
+import net.raccoon.will.sapientia.client.gui.GuiManager;
+import net.raccoon.will.sapientia.client.gui.element.GuiElement;
+import net.raccoon.will.sapientia.client.gui.element.ItemElement;
+import net.raccoon.will.sapientia.client.gui.element.TextElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SapGuiElements {
     public static final List<GuiElement> ELEMENTS = new ArrayList<>();
 
-    public static final TextElement TEXT_TEST = register(
-            new TextElement(
-                    Component.literal("Home Rune"),
-                    0xd185d6, true,
-                    Anchor.TOP_LEFT,
-                    27, 10));
+    private static TextElement textTest;
+    private static ItemElement itemTest;
 
-    public static final ItemElement ITEM_TEST = register(
-            new ItemElement(
-                    new ItemStack(SapItems.HOME_RUNE.get()),
-                    16, 16,
-                    Anchor.TOP_LEFT,
-                    10, 10));
-
-    public static final SimpleElement SIMPLE_ELEMENT = register(
-            new SimpleElement(
-                    ResourceLocation.fromNamespaceAndPath("sapientia", "textures/gui/home_rune.png"),
-                    32, 32, 16, 16,
-                    Anchor.TOP_CENTER, 0, 10
-    ));
-
-    private static <T extends GuiElement> T register(T element) {
+    private static <T extends GuiElement> T create(Supplier<T> supplier) {
+        T element = supplier.get();
         ELEMENTS.add(element);
+        GuiManager.add(element);
         return element;
     }
 
+    public static TextElement textTest() {
+        if (textTest == null)
+            textTest = create(() -> new TextElement(
+                    Component.literal("Standing"),
+                    0xd185d6, true,
+                    Anchor.TOP_CENTER, 0, 26));
+        return textTest;
+    }
+
+    public static ItemElement itemTest() {
+        if (itemTest == null)
+            itemTest = create(() -> new ItemElement(
+                    new ItemStack(SapItems.HOME_RUNE.get()),
+                    16, 16,
+                    Anchor.TOP_CENTER, 0, 10));
+        return itemTest;
+    }
+
+    private static void register(GuiElement element) {
+        ELEMENTS.add(element);
+        GuiManager.add(element);
+    }
+
     public static void init() {
-        ELEMENTS.forEach(GuiManager::add);
+        textTest();
+        itemTest();
+    }
+
+    public static List<GuiElement> all() {
+        return ELEMENTS;
     }
 }

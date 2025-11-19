@@ -1,4 +1,4 @@
-package net.raccoon.will.sapientia.client.overlay;
+package net.raccoon.will.sapientia.client.gui;
 
 public enum Anchor {
     TOP_LEFT, TOP_CENTER, TOP_RIGHT,

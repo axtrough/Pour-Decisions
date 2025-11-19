@@ -1,16 +1,13 @@
-package net.raccoon.will.sapientia.client.overlay.element;
+package net.raccoon.will.sapientia.client.gui.element;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.raccoon.will.sapientia.client.overlay.Anchor;
+import net.raccoon.will.sapientia.client.gui.Anchor;
 
 //made by will >:3
 
 public abstract class GuiElement {
-    protected int width;
-    protected int height;
-    protected int offsetX;
-    protected int offsetY;
+    protected int width, height, offsetX, offsetY;
     protected Anchor anchor;
 
     public GuiElement(int width, int height, Anchor anchor, int offsetX, int offsetY) {

@@ -11,14 +11,12 @@ import net.minecraft.util.ExtraCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nullable;
+
 import java.util.function.Supplier;
 
 public class SapComponents {
     public static final DeferredRegister.DataComponents COMPONENTS =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, "sapientia");
-
-
 
     public static final Supplier<DataComponentType<BlockPos>> RUNE_POS =
             register("rune_pos", BlockPos.CODEC, BlockPos.STREAM_CODEC);
@@ -29,9 +27,6 @@ public class SapComponents {
     public static final Supplier<DataComponentType<Integer>> MAX_COOLDOWN =
             register("max_cooldown", ExtraCodecs.NON_NEGATIVE_INT, ByteBufCodecs.VAR_INT);
 
-    // -------------------------
-    //     REGISTER HELPER
-    // -------------------------
 
     private static <T> Supplier<DataComponentType<T>> register(
             String name,
@@ -40,8 +35,8 @@ public class SapComponents {
     ) {
         return COMPONENTS.register(name, () ->
                 DataComponentType.<T>builder()
-                        .persistent(codec)            // Save to NBT
-                        .networkSynchronized(streamCodec) // Sync to client
+                        .persistent(codec)
+                        .networkSynchronized(streamCodec)
                         .build()
         );
     }

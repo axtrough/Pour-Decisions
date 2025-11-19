@@ -1,8 +1,8 @@
-package net.raccoon.will.sapientia.client.overlay;
+package net.raccoon.will.sapientia.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.raccoon.will.sapientia.client.overlay.element.GuiElement;
+import net.raccoon.will.sapientia.client.gui.element.GuiElement;
 
 import java.util.ArrayList;
 import java.util.List;

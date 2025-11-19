@@ -1,8 +1,8 @@
-package net.raccoon.will.sapientia.client.overlay.element;
+package net.raccoon.will.sapientia.client.gui.element;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import net.raccoon.will.sapientia.client.overlay.Anchor;
+import net.raccoon.will.sapientia.client.gui.Anchor;
 
 public class SimpleElement extends GuiElement {
     protected final ResourceLocation texture;
@@ -18,6 +18,15 @@ public class SimpleElement extends GuiElement {
 
     @Override
     protected void draw(GuiGraphics graphics, int x, int y) {
-        graphics.blit(texture, x, y, 0, 0, width, height, texWidth, texHeight);
+        graphics.pose().pushPose();
+        float scaleX = (float) width / (float) texWidth;
+        float scaleY = (float) height / (float) texHeight;
+
+        graphics.pose().translate(x, y, 0);
+        graphics.pose().scale(scaleX, scaleY, 1);
+
+        graphics.blit(texture, 0, 0, 0, 0, texWidth, texHeight, texWidth, texHeight);
+
+        graphics.pose().popPose();
     }
 }
