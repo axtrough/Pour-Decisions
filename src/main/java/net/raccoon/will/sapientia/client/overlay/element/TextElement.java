@@ -1,10 +1,8 @@
 package net.raccoon.will.sapientia.client.overlay.element;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.raccoon.will.sapientia.client.overlay.Anchor;
 
 public class TextElement extends GuiElement{
