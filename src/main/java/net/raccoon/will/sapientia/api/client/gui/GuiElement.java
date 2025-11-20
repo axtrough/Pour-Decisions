@@ -9,7 +9,6 @@ public abstract class GuiElement {
     protected int width, height, offsetX, offsetY;
     protected Anchor anchor;
     protected float scale = 1.0f;
-    protected boolean dirty = true;
 
     protected final int originalWidth, originalHeight, originalOffsetX, originalOffsetY;
     protected final float originalScale;

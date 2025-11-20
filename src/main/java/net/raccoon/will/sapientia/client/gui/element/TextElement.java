@@ -12,7 +12,7 @@ public class TextElement extends GuiElement {
     private int color;
     private final int originalColor;
     private boolean shadow;
-
+    protected boolean dirty = true;
 
     protected int cachedWidth;
     protected int cachedHeight;

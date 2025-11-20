@@ -21,13 +21,11 @@ public class SimpleElement extends GuiElement {
 
     public void resetTexture() {
         this.texture = originalTexture;
-        dirty = true;
     }
 
     public void setTexture(ResourceLocation texture) {
         if (!texture.equals(this.texture)) {
             this.texture = texture;
-            dirty = true;
         }
     }
 
