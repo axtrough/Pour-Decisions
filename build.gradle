@@ -44,6 +44,13 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        friend {
+            client()
+
+            programArgument "--username"
+            programArgument "MichealJacksonII"
+        }
+
         server {
             server()
             programArgument '--nogui'
@@ -120,6 +127,7 @@ dependencies {
     //Performance
     runtimeOnly("maven.modrinth:iris:${iris_version}")
     runtimeOnly("maven.modrinth:sodium:${sodium_version}")
+    runtimeOnly("maven.modrinth:dynamic-fps:TWvfxJSz")
     runtimeOnly("maven.modrinth:immediatelyfast:${immediatelyfast_version}")
 
     //Quality of Life

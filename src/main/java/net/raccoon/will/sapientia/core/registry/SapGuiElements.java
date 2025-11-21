@@ -15,20 +15,13 @@ import java.util.function.Supplier;
 
 public class SapGuiElements {
     public static final List<GuiElement> ELEMENTS = new ArrayList<>();
-
     private static TextElement textTest;
     private static ItemElement itemTest;
-
-
-    public static void init() {
-        itemHeld();
-        textHeld();
-    }
 
     public static TextElement textHeld() {
         if (textTest == null)
             textTest = create(() -> new TextElement(
-                    Component.literal("I have a boner"),
+                    Component.literal("Cheese balls loves my balls"),
                     0xd185d6, true,
                     Anchor.TOP_CENTER, 0, 26));
         return textTest;
@@ -43,6 +36,10 @@ public class SapGuiElements {
         return itemTest;
     }
 
+    public static void init() {
+        itemHeld();
+        textHeld();
+    }
 
     //----------------------------------------------
     public static List<GuiElement> all() {

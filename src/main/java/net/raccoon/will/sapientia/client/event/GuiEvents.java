@@ -3,6 +3,8 @@ package net.raccoon.will.sapientia.client.event;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,15 +26,11 @@ public class GuiEvents {
 
         int screenWidth = window.getGuiScaledWidth();
         int screenHeight = window.getGuiScaledHeight();
-        var stack = player.getMainHandItem();
-
-        SapGuiElements.itemHeld().setItem(stack);
-        SapGuiElements.textHeld().setText(stack.getHoverName());
 
         if (player.isCrouching()) {
-            SapGuiElements.textHeld().setColor(0x1e2bba);
+            SapGuiElements.textHeld().fadeTo(0, 1f);
         } else {
-            SapGuiElements.textHeld().resetColor();
+            SapGuiElements.textHeld().fadeTo(1, 1f);
         }
 
         GuiManager.render(guiGraphics, screenWidth, screenHeight, event);

@@ -7,15 +7,16 @@ import net.raccoon.will.sapientia.api.client.gui.GuiElement;
 import net.raccoon.will.sapientia.api.client.gui.Anchor;
 
 public class TextElement extends GuiElement {
-    private Component text;
     private final Component originalText;
-    private int color;
+    private Component text;
+
     private final int originalColor;
     private boolean shadow;
-    protected boolean dirty = true;
+    private int color;
 
-    protected int cachedWidth;
+    protected boolean dirty = true;
     protected int cachedHeight;
+    protected int cachedWidth;
 
     public TextElement(Component text, int color, boolean shadow, Anchor anchor, int offsetX, int offsetY) {
         super(0, 0, anchor, offsetX, offsetY);

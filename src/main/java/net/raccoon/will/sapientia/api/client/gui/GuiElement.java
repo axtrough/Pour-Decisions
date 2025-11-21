@@ -9,6 +9,7 @@ public abstract class GuiElement {
     protected int width, height, offsetX, offsetY;
     protected Anchor anchor;
     protected float scale = 1.0f;
+    protected float alpha = 1.0f;
 
     protected final int originalWidth, originalHeight, originalOffsetX, originalOffsetY;
     protected final float originalScale;
@@ -28,6 +29,21 @@ public abstract class GuiElement {
     }
 
     public void updateSize() {
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = Math.min(1.0f, Math.max(0.0f, alpha));
+    }
+
+    public float getAlpha() {
+        return this.alpha;
+    }
+
+    public void fadeTo(float targetAlpha, float speed) {
+        this.alpha += (targetAlpha - this.alpha) * speed;
+        if (Math.abs(targetAlpha - alpha) < 0.01f) {
+            alpha = targetAlpha;
+        }
     }
 
     public void setScale(float scale) {
@@ -63,8 +79,9 @@ public abstract class GuiElement {
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(scale, scale, 1);
-
+        graphics.setColor(1f, 1f, 1f, this.alpha);
         draw(graphics);
+        graphics.setColor(1f, 1f, 1f, 1f);
         graphics.pose().popPose();
     }
 
