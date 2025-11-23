@@ -2,6 +2,7 @@ package net.raccoon.will.sapientia.common.item;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -95,7 +96,7 @@ public class RevolverItem extends Item {
                 player.hurt(SapDamageTypes.causeRevolverSuicide(player.level().registryAccess()), 10000f);
             }
             player.displayClientMessage(Component.literal("BANG!"), true);
-            player.playSound(SapSounds.REVOLVER_SHOOT.get());
+            level.playLocalSound(player, SapSounds.REVOLVER_SHOOT.get(), SoundSource.PLAYERS, 1, 1);
             bullets.remove((Integer) current);
             stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
         } else {
