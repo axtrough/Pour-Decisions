@@ -2,7 +2,6 @@ package net.raccoon.will.sapientia.core.registry;
 
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.raccoon.will.sapientia.api.client.gui.GuiElement;
 import net.raccoon.will.sapientia.api.client.gui.Anchor;

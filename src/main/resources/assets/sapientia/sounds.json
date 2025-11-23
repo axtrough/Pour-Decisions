@@ -1,0 +1,8 @@
+{
+  "revolver_shoot": {
+    "subtitle": "sounds.sapientia.revolver_shoot",
+    "sounds": [
+      "sapientia:revolver_shoot"
+    ]
+  }
+}

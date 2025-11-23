@@ -29,6 +29,7 @@ public class Sapientia {
         SapBlocks.register(modEventBus);
         SapItems.register(modEventBus);
         SapComponents.register(modEventBus);
+        SapSounds.register(modEventBus);
         SapCreativeTab.register(modEventBus);
     }
 

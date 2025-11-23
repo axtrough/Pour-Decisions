@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.raccoon.will.sapientia.core.registry.SapComponents;
 import net.raccoon.will.sapientia.core.registry.SapDamageTypes;
+import net.raccoon.will.sapientia.core.registry.SapSounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,7 @@ public class RevolverItem extends Item {
                 player.hurt(SapDamageTypes.causeRevolverSuicide(player.level().registryAccess()), 10000f);
             }
             player.displayClientMessage(Component.literal("BANG!"), true);
-            player.playSound(SoundEvents.ANVIL_LAND, 5, 1);
+            player.playSound(SapSounds.REVOLVER_SHOOT.get());
             bullets.remove((Integer) current);
             stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
         } else {
