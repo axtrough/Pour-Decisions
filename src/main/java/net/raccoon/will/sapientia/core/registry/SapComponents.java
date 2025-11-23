@@ -12,6 +12,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class SapComponents {
@@ -27,6 +29,30 @@ public class SapComponents {
     public static final Supplier<DataComponentType<Integer>> MAX_COOLDOWN =
             register("max_cooldown", ExtraCodecs.NON_NEGATIVE_INT, ByteBufCodecs.VAR_INT);
 
+    public static final Supplier<DataComponentType<Integer>> CURRENT_CHAMBER =
+            register("current_chamber", ExtraCodecs.NON_NEGATIVE_INT, ByteBufCodecs.VAR_INT);
+
+    public static final Supplier<DataComponentType<Integer>> NUM_CHAMBERS =
+            register("num_chambers", ExtraCodecs.NON_NEGATIVE_INT, ByteBufCodecs.VAR_INT);
+
+    public static final Supplier<DataComponentType<List<Integer>>> BULLET_CHAMBERS =
+            registerIntList("bullet_chambers");
+
+    private static Supplier<DataComponentType<List<Integer>>> registerIntList(String name) {
+        StreamCodec<RegistryFriendlyByteBuf, List<Integer>> codec = StreamCodec.of(
+                (buf, list) -> {
+                    buf.writeVarInt(list.size());
+                    for (int i : list) buf.writeVarInt(i);
+                },
+                buf -> {
+                    int size = buf.readVarInt();
+                    List<Integer> list = new ArrayList<>(size);
+                    for (int j = 0; j < size; j++) list.add(buf.readVarInt());
+                    return list;
+                }
+        );
+        return register(name, Codec.list(Codec.INT), codec);
+    }
 
     private static <T> Supplier<DataComponentType<T>> register(
             String name,

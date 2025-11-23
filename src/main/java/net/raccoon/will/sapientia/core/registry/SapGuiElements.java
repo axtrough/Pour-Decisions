@@ -15,18 +15,18 @@ import java.util.function.Supplier;
 
 public class SapGuiElements {
     public static final List<GuiElement> ELEMENTS = new ArrayList<>();
-    private static TextElement textHeld;
+    private static TextElement gunInfo;
     private static ItemElement itemHeld;
 
-    public static TextElement textHeld() {
-        if (textHeld == null) {
-            textHeld = create(() -> new TextElement(
-                    Component.literal("Cheese balls loves my balls"),
+    public static TextElement gunInfo() {
+        if (gunInfo == null) {
+            gunInfo = create(() -> new TextElement(
+                    Component.literal(""),
                     0xd185d6, true,
                     Anchor.TOP_CENTER, 0, 26
             ));
         }
-        return textHeld;
+        return gunInfo;
     }
 
     public static ItemElement itemHeld() {
@@ -42,7 +42,7 @@ public class SapGuiElements {
 
     public static void init() {
         itemHeld();
-        textHeld();
+        gunInfo();
     }
 
     public static List<GuiElement> all() {

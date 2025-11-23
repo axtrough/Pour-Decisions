@@ -14,5 +14,6 @@ public class SapItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         basicItem(SapItems.HOME_RUNE.get());
+        basicItem(SapItems.REVOLVER.get());
     }
 }

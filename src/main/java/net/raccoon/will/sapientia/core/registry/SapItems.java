@@ -6,6 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.raccoon.will.sapientia.common.item.HomeRuneItem;
+import net.raccoon.will.sapientia.common.item.RevolverItem;
 import net.raccoon.will.sapientia.core.Sapientia;
 
 import static net.minecraft.world.item.Tiers.DIAMOND;
@@ -19,6 +20,9 @@ public class SapItems {
     public static final DeferredItem<Item> HOME_RUNE = ITEMS.register("home_rune",
                     () -> new HomeRuneItem(new Item.Properties().stacksTo(1)
                             .component(SapComponents.MAX_COOLDOWN.get(), 2400), 2400));
+
+    public static final DeferredItem<Item> REVOLVER = ITEMS.register("revolver",
+            () -> new RevolverItem(new Item.Properties().stacksTo(1)));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

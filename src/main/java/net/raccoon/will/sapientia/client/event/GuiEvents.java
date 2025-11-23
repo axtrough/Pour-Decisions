@@ -4,13 +4,14 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.raccoon.will.sapientia.api.client.gui.GuiManager;
+import net.raccoon.will.sapientia.common.item.RevolverItem;
 import net.raccoon.will.sapientia.core.Sapientia;
 import net.raccoon.will.sapientia.core.registry.SapGuiElements;
 
@@ -24,15 +25,22 @@ public class GuiEvents {
         Minecraft minecraft = Minecraft.getInstance();
         Window window = minecraft.getWindow();
         Player player = minecraft.player;
+        ItemStack stack = player.getMainHandItem();
+
 
 
         int screenWidth = window.getGuiScaledWidth();
         int screenHeight = window.getGuiScaledHeight();
 
-        if (player.isCrouching()) {
-            SapGuiElements.textHeld().fadeTo(0, 1f, deltaSeconds);
-        } else {
-            SapGuiElements.textHeld().fadeTo(1, 1f, deltaSeconds);
+        if (stack.getItem() instanceof RevolverItem gunItem) {
+            int bullets = gunItem.getBulletCount(stack);
+            int chambers = gunItem.getNumChambers(stack);
+
+            if (player.isHolding(gunItem)) {
+                SapGuiElements.gunInfo().setText(Component.literal(bullets + "/" + chambers));
+            } else {
+                SapGuiElements.gunInfo().resetText();
+            }
         }
 
         GuiManager.render(guiGraphics, screenWidth, screenHeight, event);
