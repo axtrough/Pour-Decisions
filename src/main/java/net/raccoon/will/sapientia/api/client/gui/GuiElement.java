@@ -11,6 +11,10 @@ public abstract class GuiElement {
     protected float scale = 1.0f;
     protected float alpha = 1.0f;
     protected float targetAlpha = 1.0f;
+    protected boolean visible = true;
+    protected ElementAnchor elementAnchor = ElementAnchor.TOP_LEFT;
+    protected GuiGroup parent = null;
+    protected boolean debug = true;
 
     protected final int originalWidth, originalHeight, originalOffsetX, originalOffsetY;
     protected final float originalScale;
@@ -29,16 +33,44 @@ public abstract class GuiElement {
         this.originalScale = scale;
     }
 
-    public void updateSize() {
-    }
+    public void setScale(float scale) {
+        this.scale = scale; }
+
+    public void setDebug (boolean debug) {
+        this.debug = debug; }
+
+    public void setOffsetX(int offsetX) {
+        this.offsetX = offsetX; }
+
+    public void setOffsetY(int offsetY) {
+        this.offsetY = offsetY; }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible; }
 
     public void setAlpha(float alpha) {
-        this.alpha = Math.min(1.0f, Math.max(0.0f, alpha));
+        this.alpha = Math.min(1.0f, Math.max(0.0f, alpha)); }
+
+    public void setElementAnchor (ElementAnchor elementAnchor) {
+        this.elementAnchor = elementAnchor; }
+
+    public boolean isVisible() { return visible; }
+    public void updateSize() {}
+
+    public boolean isChildElement() {
+        return parent != null;
     }
 
-    public float getAlpha() {
-        return alpha;
-    }
+    public float getAlpha() { return alpha; }
+    public int getOffsetX() { return offsetX; }
+    public int getOffsetY() { return offsetY; }
+    public int getOriginalOffsetX() { return originalOffsetX; }
+    public int getOriginalOffsetY() { return originalOffsetY; }
+
+    public void resetScale() { this.scale = originalScale; }
+    public void resetSize() { this.width = originalWidth; this.height = originalHeight; }
+    public void resetOffset() { this.offsetX = originalOffsetX; this.offsetY = originalOffsetY; }
+    public void resetAll() { resetOffset(); resetScale(); resetSize(); }
 
     public void fadeTo(float target, float fadeDurationSeconds, float deltaSeconds) {
         this.targetAlpha = target;
@@ -49,33 +81,8 @@ public abstract class GuiElement {
         }
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-
-    public void resetScale() {
-        this.scale = originalScale;
-    }
-
-    public void resetOffset() {
-        this.offsetX = originalOffsetX;
-        this.offsetY = originalOffsetY;
-    }
-
-    public void resetSize() {
-        this.width = originalWidth;
-        this.height = originalHeight;
-    }
-
-    public void resetAll() {
-        resetOffset();
-        resetScale();
-        resetSize();
-    }
-
-    protected abstract void draw(GuiGraphics graphics);
-
     public void render(GuiGraphics graphics, int screenWidth, int screenHeight, RenderGuiEvent.Pre event) {
+        if (!visible) return;
         updateSize();
         int x = calculateTopLeftX(screenWidth);
         int y = calculateTopLeftY(screenHeight);
@@ -87,8 +94,15 @@ public abstract class GuiElement {
 
         graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         draw(graphics);
+
+        if (debug) {
+            graphics.fill(0, 0, width, height, 0x40FF0000);
+            graphics.renderOutline(0, 0, width, height, 0xFFFF0000);
+        }
         graphics.pose().popPose();
     }
+
+    protected abstract void draw(GuiGraphics graphics);
 
     //don't talk to me about it.
     protected int calculateTopLeftX(int screenWidth) {
@@ -106,6 +120,7 @@ public abstract class GuiElement {
 
         return anchorX - anchorOffsetX;
     }
+
 
     protected int calculateTopLeftY(int screenHeight) {
         int anchorY = switch (anchor) {

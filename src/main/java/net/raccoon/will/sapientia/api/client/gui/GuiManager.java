@@ -28,7 +28,9 @@ public class GuiManager {
 
         // actual rendering
         for (GuiElement element : ELEMENTS) {
-            element.render(guiGraphics, screenWidth, screenHeight, event);
+            if (!element.isChildElement()) {
+                element.render(guiGraphics, screenWidth, screenHeight, event);
+            }
         }
 
         if (DEBUG_RENDER_TIME) {

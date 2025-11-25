@@ -12,7 +12,9 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.raccoon.will.sapientia.client.input.SapientiaKeybinds;
 import net.raccoon.will.sapientia.common.command.RouletteCommand;
+import net.raccoon.will.sapientia.core.network.NetworkHandler;
 import net.raccoon.will.sapientia.core.registry.*;
 import org.slf4j.Logger;
 
@@ -31,6 +33,9 @@ public class Sapientia {
         SapComponents.register(modEventBus);
         SapSounds.register(modEventBus);
         SapCreativeTab.register(modEventBus);
+
+        modEventBus.addListener(NetworkHandler::registerPayloads);
+        modEventBus.addListener(SapientiaKeybinds::register);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

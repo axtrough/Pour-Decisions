@@ -3,5 +3,7 @@
   "item.sapientia.big_diamond_sword": "Big Diamond Sword",
   "item.sapientia.home_rune": "Home Rune",
   "item.sapientia.revolver": "Revolver",
-  "creativetab.sapientia.sapientia_tab": "Sapientia Tab"
+  "item.sapientia.bullet": "Bullet",
+  "creativetab.sapientia.sapientia_tab": "Sapientia Tab",
+  "key.sapientia.reload": "Reload Revolver"
 }

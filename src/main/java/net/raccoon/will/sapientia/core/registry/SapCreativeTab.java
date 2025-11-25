@@ -22,7 +22,7 @@ public class SapCreativeTab {
                         output.accept(SapItems.HOME_RUNE);
                         output.accept(SapBlocks.CHROMSTONE);
                         output.accept(SapItems.REVOLVER);
-                        output.accept(SapItems.BIG_DIAMOND_SWORD);
+                        output.accept(SapItems.BULLET);
 
 
 

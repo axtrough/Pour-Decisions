@@ -24,6 +24,9 @@ public class SapItems {
     public static final DeferredItem<Item> REVOLVER = ITEMS.register("revolver",
             () -> new RevolverItem(new Item.Properties().stacksTo(1)));
 
+    public static final DeferredItem<Item> BULLET = ITEMS.register("bullet",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

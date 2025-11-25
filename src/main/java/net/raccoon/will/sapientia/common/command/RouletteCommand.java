@@ -27,10 +27,20 @@ public class RouletteCommand {
                                                             Player player = context.getSource().getPlayerOrException();
                                                             int amount = IntegerArgumentType.getInteger(context, "amount");
 
-                                                            ItemStack stack = player.getMainHandItem();
-                                                            if (stack.getItem() instanceof RevolverItem) {
-                                                                RevolverItem gun = (RevolverItem) stack.getItem();
-                                                                int chambers = gun.getNumChambers(stack);
+
+                                                            ItemStack[] stacks = {player.getMainHandItem(), player.getOffhandItem()};
+                                                            ItemStack gunStack = null;
+
+                                                            for (ItemStack stack : stacks) {
+                                                                if (stack.getItem() instanceof RevolverItem) {
+                                                                    gunStack = stack;
+                                                                    break;
+                                                                }
+                                                            }
+
+                                                            if (gunStack != null) {
+                                                                RevolverItem gun = (RevolverItem) gunStack.getItem();
+                                                                int chambers = gun.getNumChambers(gunStack);
 
                                                                 List<Integer> bullets = new ArrayList<>();
                                                                 Random random = new Random();
@@ -39,8 +49,8 @@ public class RouletteCommand {
                                                                     if (!bullets.contains(pos)) bullets.add(pos);
                                                                 }
 
-                                                                stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
-                                                                stack.set(SapComponents.CURRENT_CHAMBER.get(), random.nextInt(chambers));
+                                                                gunStack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
+                                                                gunStack.set(SapComponents.CURRENT_CHAMBER.get(), random.nextInt(chambers));
 
                                                                 context.getSource().sendSuccess(
                                                                         () -> Component.literal("Loaded " + amount + " bullets into the gun"), false
@@ -63,16 +73,26 @@ public class RouletteCommand {
                                                             Player player = context.getSource().getPlayerOrException();
                                                             int amount = IntegerArgumentType.getInteger(context, "amount");
 
-                                                            ItemStack stack = player.getMainHandItem();
-                                                            if (stack.getItem() instanceof RevolverItem) {
-                                                                stack.set(SapComponents.NUM_CHAMBERS.get(), amount);
+                                                            ItemStack[] stacks = {player.getMainHandItem(), player.getOffhandItem()};
+                                                            ItemStack gunStack = null;
 
-                                                                List<Integer> bullets = stack.getOrDefault(SapComponents.BULLET_CHAMBERS.get(), new ArrayList<>());
+                                                            for (ItemStack stack : stacks) {
+                                                                if (stack.getItem() instanceof RevolverItem) {
+                                                                    gunStack = stack;
+                                                                    break;
+                                                                }
+                                                            }
+
+
+                                                            if (gunStack != null) {
+                                                                gunStack.set(SapComponents.NUM_CHAMBERS.get(), amount);
+
+                                                                List<Integer> bullets = new ArrayList<>(gunStack.getOrDefault(SapComponents.BULLET_CHAMBERS.get(), new ArrayList<>()));
                                                                 bullets.removeIf(b -> b >= amount);
-                                                                stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
+                                                                gunStack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
 
-                                                                int current = stack.getOrDefault(SapComponents.CURRENT_CHAMBER.get(), 0);
-                                                                if (current >= amount) stack.set(SapComponents.CURRENT_CHAMBER.get(), 0);
+                                                                int current = gunStack.getOrDefault(SapComponents.CURRENT_CHAMBER.get(), 0);
+                                                                if (current >= amount) gunStack.set(SapComponents.CURRENT_CHAMBER.get(), 0);
 
                                                                 context.getSource().sendSuccess(
                                                                         () -> Component.literal("Set gun chambers to " + amount), false
