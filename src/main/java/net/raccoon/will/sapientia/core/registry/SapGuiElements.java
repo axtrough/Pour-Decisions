@@ -3,8 +3,12 @@ package net.raccoon.will.sapientia.core.registry;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.raccoon.will.sapientia.api.client.gui.*;
-import net.raccoon.will.sapientia.client.gui.element.*;
+import net.raccoon.will.structura.api.gui.Anchor;
+import net.raccoon.will.structura.api.gui.GuiGroup;
+import net.raccoon.will.structura.api.gui.elements.GuiElement;
+import net.raccoon.will.structura.api.gui.elements.ItemElement;
+import net.raccoon.will.structura.api.gui.elements.TextElement;
+import net.raccoon.will.structura.client.gui.GuiManager;
 
 import java.util.ArrayList;
 import java.util.List;

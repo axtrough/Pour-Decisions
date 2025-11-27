@@ -17,18 +17,44 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.raccoon.will.sapientia.core.registry.SapComponents;
-import net.raccoon.will.sapientia.core.registry.SapDamageTypes;
+import net.raccoon.will.sapientia.core.registry.SapDamageSources;
 import net.raccoon.will.sapientia.core.registry.SapItems;
 import net.raccoon.will.sapientia.core.registry.SapSounds;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class RevolverItem extends Item {
 
+    private static final int NUM_CHAMBERS_DEFAULT = 6;
+    private static final int SHOOT_COOLDOWN_TICKS = 20; //1 sec
+    private static final int RELOAD_COOLDOWN_TICKS = 40; //2 sec
 
     public RevolverItem(Properties properties) {
         super(properties);
+    }
+
+    public static String visualizeChambers(ItemStack stack) {
+        int chambers = stack.getOrDefault(SapComponents.NUM_CHAMBERS.get(), 6);
+        int current = stack.getOrDefault(SapComponents.CURRENT_CHAMBER.get(), 0);
+        List<Integer> bullets = stack.getOrDefault(SapComponents.BULLET_CHAMBERS.get(), new ArrayList<>());
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Cylinder: [");
+        for (int i = 0; i < chambers; i++) {
+            if (i == current) sb.append(">"); // indicate current chamber
+            else sb.append(" ");
+
+            if (bullets.contains(i)) sb.append("X"); // bullet
+            else sb.append("#"); // empty
+
+            if (i == current) sb.append("<");
+            else sb.append(" ");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     public List<Integer> getBulletChambers(ItemStack stack) {
@@ -40,77 +66,29 @@ public class RevolverItem extends Item {
     }
 
     public int getNumChambers(ItemStack stack) {
-        return stack.getOrDefault(SapComponents.NUM_CHAMBERS.get(), 6);
+        return stack.getOrDefault(SapComponents.NUM_CHAMBERS.get(), NUM_CHAMBERS_DEFAULT);
     }
 
-    private static int getCurrentChamber(ItemStack stack) {
-        return stack.getOrDefault(SapComponents.CURRENT_CHAMBER.get(), -1);
+    public int getCurrentChamber(ItemStack stack) {
+        return stack.getOrDefault(SapComponents.CURRENT_CHAMBER.get(), 0);
     }
 
-    private static void setCurrentChamber(ItemStack stack, int value) {
-        stack.set(SapComponents.CURRENT_CHAMBER.get(), value);
+    public void setCurrentChamber(ItemStack stack, int value) {
+        stack.set(SapComponents.CURRENT_CHAMBER.get(), value % getNumChambers(stack));
+    }
+
+    private void advanceCylinder(ItemStack stack) {
+        setCurrentChamber(stack, getCurrentChamber(stack) + 1);
     }
 
     private void spinCylinder(ItemStack stack, RandomSource random) {
         int chambers = getNumChambers(stack);
         setCurrentChamber(stack, random.nextInt(chambers));
-    }
-
-    private void advanceCylinder(ItemStack stack) {
-        int chambers = getNumChambers(stack);
-        int next = (getCurrentChamber(stack) + 1) % chambers;
-        setCurrentChamber(stack, next);
-    }
-
-    private boolean rollCylinder(ItemStack stack, Player player, Level level) {
-        if (player.isCrouching()) {
-            spinCylinder(stack, player.getRandom());
-            level.playLocalSound(player, SapSounds.REVOLVER_SPIN.get(), SoundSource.PLAYERS, 1, 1);
-            player.displayClientMessage(Component.literal("Spinning Cylinder..."), true);
-            return true;
-        }
-        return false;
-    }
-
-    private void clampChambers(ItemStack stack) {
-        int chambers = getNumChambers(stack);
-
-        List<Integer> bullets = new ArrayList<>(getBulletChambers(stack));
-        bullets.removeIf(b -> b >= chambers);
-        stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
-
-        int current = getCurrentChamber(stack);
-        if (current >= chambers) setCurrentChamber(stack, 0);
-    }
-
-    public void reload(ItemStack gun, Player player) {
-        List<Integer> chambers = getBulletChambers(gun);
-        List<Integer> newChambers = new ArrayList<>(chambers);
-
-        int max = getNumChambers(gun);
-        int bulletsNeeded = max - newChambers.size();
-        int loaded = 0;
-
-        for (int i = 0; i < bulletsNeeded; i++) {
-            if (removeBulletFromInventory(player)) {
-                newChambers.add(newChambers.size());
-                loaded++;
-            } else {
-                break;
-            }
-        }
-        gun.set(SapComponents.BULLET_CHAMBERS.get(), newChambers);
-
-        if (loaded > 0) {
-            player.level().playSound(null, player.blockPosition(), SapSounds.REVOLVER_SPIN.get(), SoundSource.PLAYERS, 1f, 1f);
-        }
+        System.out.println(visualizeChambers(stack));
     }
 
     private boolean removeBulletFromInventory(Player player) {
-        if  (player.isCreative()) {
-            return true;
-        }
-
+        if (player.isCreative()) return true;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (stack.is(SapItems.BULLET.get())) {
@@ -121,63 +99,101 @@ public class RevolverItem extends Item {
         return false;
     }
 
+    public void reload(ItemStack stack, Player player) {
+        System.out.println(visualizeChambers(stack));
+
+        if (player.getCooldowns().isOnCooldown(this)) return;
+
+        List<Integer> bullets = new ArrayList<>(getBulletChambers(stack));
+        int maxChambers = getNumChambers(stack);
+
+        // calculate empty chambers
+        List<Integer> emptyChambers = new ArrayList<>();
+        for (int i = 0; i < maxChambers; i++) {
+            if (!bullets.contains(i)) emptyChambers.add(i);
+        }
+
+        if (emptyChambers.isEmpty()) return; // cylinder full
+
+        // shuffle empty chambers for randomness
+        Collections.shuffle(emptyChambers, new Random(player.getRandom().nextLong()));
+
+        int bulletsLoaded = 0;
+        for (int chamber : emptyChambers) {
+            if (removeBulletFromInventory(player)) {
+                bullets.add(chamber);
+                bulletsLoaded++;
+            } else {
+                break; // no more bullets in inventory
+            }
+        }
+
+        if (bulletsLoaded == 0) {
+            player.displayClientMessage(Component.literal("No bullets to reload!"), true);
+            return;
+        }
+
+        // set bullets in stack
+        stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
+
+        // pick a random bullet in cylinder to be current
+        int randomCurrent = bullets.get(new Random().nextInt(bullets.size()));
+        setCurrentChamber(stack, randomCurrent);
+
+        // play sound and set cooldown
+        player.level().playLocalSound(player, SapSounds.REVOLVER_SPIN.get(), SoundSource.PLAYERS, 1f, 1f);
+        player.getCooldowns().addCooldown(this, RELOAD_COOLDOWN_TICKS);
+    }
+
+
+    // ----- Shooting ----- \\
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        clampChambers(stack);
-
-
-        List<Integer> bullets = getBulletChambers(stack);
+        List<Integer> bullets = new ArrayList<>(getBulletChambers(stack));
         int current = getCurrentChamber(stack);
 
-        if (bullets.isEmpty()) {
-            player.displayClientMessage(Component.literal("No bullets in gun."), true);
-            level.playLocalSound(player, SapSounds.REVOLVER_EMPTY.get(), SoundSource.PLAYERS, 1, 1);
-
-            if (rollCylinder(stack, player, level)) return InteractionResultHolder.consume(stack);
+        //spin cylinder if crouching
+        if (player.isCrouching()) {
+            spinCylinder(stack, player.getRandom());
+            level.playLocalSound(player, SapSounds.REVOLVER_SPIN.get(), SoundSource.PLAYERS, 1f, 1f);
             advanceCylinder(stack);
             return InteractionResultHolder.consume(stack);
         }
 
-        if (rollCylinder(stack, player, level)) return InteractionResultHolder.consume(stack);
+        //cooldown
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return InteractionResultHolder.fail(stack);
+        }
 
+        //shooting
         if (bullets.contains(current)) {
-
-            if (!level.isClientSide()) {
-
-                if (hand == InteractionHand.OFF_HAND) {
-                    player.hurt(SapDamageTypes.causeRevolverSuicide(player.level().registryAccess()), 67f);
-
-                } else if (hand == InteractionHand.MAIN_HAND) {
-                    HitResult hit = hitscan(player, 40);
-
-                    if (hit.getType() == HitResult.Type.ENTITY) {
-                        EntityHitResult entityHit = (EntityHitResult) hit;
-                        Entity target = entityHit.getEntity();
-
-                        if (target instanceof LivingEntity living) {
-                            target.hurt(SapDamageTypes.causeRevolverShot(target.level().registryAccess()), 67f);
-                        }
-                    }
-                }
-            }
-
-            player.displayClientMessage(Component.literal("BANG!"), true);
-            level.playLocalSound(player, SapSounds.REVOLVER_SHOOT.get(), SoundSource.PLAYERS, 1, 1);
-
             bullets.remove((Integer) current);
             stack.set(SapComponents.BULLET_CHAMBERS.get(), bullets);
+            player.getCooldowns().addCooldown(this, SHOOT_COOLDOWN_TICKS);
 
+            if (!level.isClientSide) {
+                HitResult hit = hitscan(player, 40);
+                if (hit.getType() == HitResult.Type.ENTITY) {
+                    EntityHitResult entityHit = (EntityHitResult) hit;
+                    Entity target = entityHit.getEntity();
+                    if (target instanceof LivingEntity living) {
+                        living.hurt(SapDamageSources.revolver(living.level(), player), 67f);
+                    }
+                } else if (hand == InteractionHand.OFF_HAND) {
+                    player.hurt(SapDamageSources.revolver(player.level(), player), 67f);
+                }
+            }
+            level.playLocalSound(player, SapSounds.REVOLVER_SHOOT.get(), SoundSource.PLAYERS, 1f, 1f);
         } else {
-            player.displayClientMessage(Component.literal("It didn't shoot loser"), true);
-            level.playLocalSound(player, SapSounds.REVOLVER_EMPTY.get(), SoundSource.PLAYERS, 1, 1);
+            level.playLocalSound(player, SapSounds.REVOLVER_EMPTY.get(), SoundSource.PLAYERS, 1f, 1f);
         }
 
         advanceCylinder(stack);
         return InteractionResultHolder.consume(stack);
     }
 
-
+    // ----- Hitscan ----- \\
     public static HitResult hitscan(Player player, double maxDistance) {
         Level level = player.level();
         Vec3 eye = player.getEyePosition(1f);
@@ -192,10 +208,7 @@ public class RevolverItem extends Item {
                 player
         ));
 
-        double blockDist = blockHit.getType() == HitResult.Type.MISS
-                ? Double.MAX_VALUE
-                : blockHit.getLocation().distanceTo(eye);
-
+        double blockDist = blockHit.getType() == HitResult.Type.MISS ? Double.MAX_VALUE : blockHit.getLocation().distanceTo(eye);
 
         EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
                 level,
@@ -206,9 +219,7 @@ public class RevolverItem extends Item {
                 e -> e instanceof LivingEntity && e != player
         );
 
-        double entityDist = entityHit == null
-                ? Double.MAX_VALUE
-                : entityHit.getLocation().distanceTo(eye);
+        double entityDist = entityHit == null ? Double.MAX_VALUE : entityHit.getLocation().distanceTo(eye);
 
         return entityDist < blockDist ? entityHit : blockHit;
     }

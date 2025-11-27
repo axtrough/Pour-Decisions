@@ -1,9 +1,19 @@
 {
+    //BLOCKS
   "block.sapientia.chromstone": "Chromstone",
+
+  //ITEMS
   "item.sapientia.big_diamond_sword": "Big Diamond Sword",
   "item.sapientia.home_rune": "Home Rune",
   "item.sapientia.revolver": "Revolver",
   "item.sapientia.bullet": "Bullet",
-  "creativetab.sapientia.sapientia_tab": "Sapientia Tab",
-  "key.sapientia.reload": "Reload Revolver"
+
+    //DEATH MESSAGES
+    "death.attack.sapientia.revolver": "%1$s was shot",
+    "death.attack.sapientia.revolver.player": "%1$s was shot by %2$s",
+    "death.attack.sapientia.revolver.self": "%1$s shot themselves",
+
+    //MISC
+    "creativetab.sapientia.sapientia_tab": "Sapientia Tab",
+    "key.sapientia.reload": "Reload Revolver"
 }

@@ -113,10 +113,12 @@ dependencies {
     //implementation = Both
 
     //Libs
+    implementation("net.raccoon.will:structura:0.0.1")
     implementation("maven.modrinth:blueprint:${blueprint_version}")
     implementation("maven.modrinth:moonlight:${moonlight_lib_version}")
     implementation("maven.modrinth:puzzles-lib:${puzzles_lib_version}")
     implementation("maven.modrinth:cloth-config:${cloth_config_version}")
+
 
     //Additional mods
     implementation("maven.modrinth:clayworks:${clayworks_version}")

@@ -1,7 +1,7 @@
 {
+  "exhaustion": 0.0,
   "message_id": "sapientia.revolver",
   "scaling": "when_caused_by_living_non_player",
-  "exhaustion": 0.0,
-  "effects": "hurt",
-  "death_message_type": "default"
+  "bypasses_armor": true,
+  "knockback_resistance": 1.0
 }

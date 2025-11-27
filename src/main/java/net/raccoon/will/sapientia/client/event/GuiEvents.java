@@ -6,16 +6,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
-import net.raccoon.will.sapientia.api.client.gui.*;
+import net.raccoon.will.structura.api.gui.*;
 import net.raccoon.will.sapientia.common.item.RevolverItem;
 import net.raccoon.will.sapientia.core.Sapientia;
 import net.raccoon.will.sapientia.core.registry.SapGuiElements;
+import net.raccoon.will.structura.client.gui.GuiManager;
 
 @EventBusSubscriber(modid = Sapientia.MODID, value = Dist.CLIENT)
 public class GuiEvents {
