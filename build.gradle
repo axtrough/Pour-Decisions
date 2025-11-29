@@ -13,6 +13,9 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    maven {
+        url = "https://jitpack.io"
+    }
 }
 
 base {
@@ -113,7 +116,7 @@ dependencies {
     //implementation = Both
 
     //Libs
-    implementation("net.raccoon.will:structura:0.0.1")
+    implementation ("com.github.axtrough:Structura:e7a7ff1075")
     implementation("maven.modrinth:blueprint:${blueprint_version}")
     implementation("maven.modrinth:moonlight:${moonlight_lib_version}")
     implementation("maven.modrinth:puzzles-lib:${puzzles_lib_version}")
@@ -135,9 +138,11 @@ dependencies {
     //Quality of Life
     implementation("maven.modrinth:jei:${jei_version}") //19.25.0.325
     implementation("maven.modrinth:emi:${emi_version}")
+    runtimeOnly("maven.modrinth:freecam:${freecam_version}")
     runtimeOnly("maven.modrinth:clientsort:${clientsort_version}")
     runtimeOnly("maven.modrinth:mouse-tweaks:${mousetweaks_version}")
     runtimeOnly("maven.modrinth:fast-item-frames:${fast_item_frames_version}")
+
 }
 
 tasks.named('processResources', ProcessResources).configure {

@@ -24,13 +24,24 @@ public record ReloadGunPacket() implements CustomPacketPayload {
 
     public static void handle(ReloadGunPacket packet, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer serverPlayer) {
-                ItemStack heldItem = serverPlayer.getMainHandItem();
+            if (context.player() instanceof ServerPlayer player) {
+                ItemStack[] stacks = {player.getMainHandItem(), player.getOffhandItem()};
 
-                if (heldItem.getItem() instanceof RevolverItem revolverItem) {
-                    revolverItem.reload(heldItem, serverPlayer);
+                RevolverItem gunItem = null;
+                ItemStack gunStack = null;
+
+                for (ItemStack stack : stacks) {
+                    if (stack.getItem() instanceof RevolverItem gun) {
+                        gunItem = gun;
+                        gunStack = stack;
+                    }
+
+                    if (gunItem != null) {
+                        gunItem.reload(stack, player);
+                    }
                 }
             }
         });
     }
 }
+

@@ -60,8 +60,8 @@ public class RouletteCommand {
                                                                         Component.literal("You must hold a Revolver!")
                                                                 );
                                                             }
-                                                            return 1;
-                                                        })
+                                                            return 1;}
+                                                        )
                                         )
                         )
                         //roulette chambers

@@ -12,6 +12,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.raccoon.will.sapientia.client.event.ClientEvents;
 import net.raccoon.will.sapientia.client.input.SapientiaKeybinds;
 import net.raccoon.will.sapientia.common.command.RouletteCommand;
 import net.raccoon.will.sapientia.core.network.NetworkHandler;
@@ -33,6 +34,7 @@ public class Sapientia {
         SapComponents.register(modEventBus);
         SapSounds.register(modEventBus);
         SapCreativeTab.register(modEventBus);
+        SapParticles.register(modEventBus);
 
         modEventBus.addListener(NetworkHandler::registerPayloads);
         modEventBus.addListener(SapientiaKeybinds::register);
@@ -48,14 +50,5 @@ public class Sapientia {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         RouletteCommand.register(event.getDispatcher());
-    }
-
-    @EventBusSubscriber(modid = Sapientia.MODID, value = Dist.CLIENT)
-    public static class ClientModEvents {
-
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            SapGuiElements.init();
-        }
     }
 }

@@ -8,32 +8,37 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.raccoon.will.sapientia.core.registry.SapComponents;
-import net.raccoon.will.sapientia.core.registry.SapDamageSources;
-import net.raccoon.will.sapientia.core.registry.SapItems;
-import net.raccoon.will.sapientia.core.registry.SapSounds;
+import net.raccoon.will.sapientia.client.event.RevolverEventHandler;
+import net.raccoon.will.sapientia.core.registry.*;
+import net.raccoon.will.structura.api.feature.Hitscan;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static net.raccoon.will.structura.api.feature.Hitscan.HitscanResult.HitType.ENTITY;
+
 public class RevolverItem extends Item {
 
     private static final int NUM_CHAMBERS_DEFAULT = 6;
     private static final int SHOOT_COOLDOWN_TICKS = 20; //1 sec
+    private static final int SPIN_COOLDOWN_TICKS = 30; //1.5 sec
     private static final int RELOAD_COOLDOWN_TICKS = 40; //2 sec
 
     public RevolverItem(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     public static String visualizeChambers(ItemStack stack) {
@@ -81,9 +86,12 @@ public class RevolverItem extends Item {
         setCurrentChamber(stack, getCurrentChamber(stack) + 1);
     }
 
-    private void spinCylinder(ItemStack stack, RandomSource random) {
+    private void spinCylinder(ItemStack stack, RandomSource random, Player player) {
         int chambers = getNumChambers(stack);
         setCurrentChamber(stack, random.nextInt(chambers));
+        if (player.getCooldowns().isOnCooldown(this)) return;
+
+        player.getCooldowns().addCooldown(this, SPIN_COOLDOWN_TICKS);
         System.out.println(visualizeChambers(stack));
     }
 
@@ -101,7 +109,6 @@ public class RevolverItem extends Item {
 
     public void reload(ItemStack stack, Player player) {
         System.out.println(visualizeChambers(stack));
-
         if (player.getCooldowns().isOnCooldown(this)) return;
 
         List<Integer> bullets = new ArrayList<>(getBulletChambers(stack));
@@ -145,7 +152,6 @@ public class RevolverItem extends Item {
         player.getCooldowns().addCooldown(this, RELOAD_COOLDOWN_TICKS);
     }
 
-
     // ----- Shooting ----- \\
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -155,7 +161,7 @@ public class RevolverItem extends Item {
 
         //spin cylinder if crouching
         if (player.isCrouching()) {
-            spinCylinder(stack, player.getRandom());
+            spinCylinder(stack, player.getRandom(), player);
             level.playLocalSound(player, SapSounds.REVOLVER_SPIN.get(), SoundSource.PLAYERS, 1f, 1f);
             advanceCylinder(stack);
             return InteractionResultHolder.consume(stack);
@@ -163,7 +169,7 @@ public class RevolverItem extends Item {
 
         //cooldown
         if (player.getCooldowns().isOnCooldown(this)) {
-            return InteractionResultHolder.fail(stack);
+            return InteractionResultHolder.consume(stack);
         }
 
         //shooting
@@ -173,10 +179,10 @@ public class RevolverItem extends Item {
             player.getCooldowns().addCooldown(this, SHOOT_COOLDOWN_TICKS);
 
             if (!level.isClientSide) {
-                HitResult hit = hitscan(player, 40);
-                if (hit.getType() == HitResult.Type.ENTITY) {
-                    EntityHitResult entityHit = (EntityHitResult) hit;
-                    Entity target = entityHit.getEntity();
+                Hitscan.HitscanResult result = Hitscan.performHitscan(player, 40);
+                if (result.type() == ENTITY) {
+                    EntityHitResult hit = result.entityHit();
+                    Entity target = hit.getEntity();
                     if (target instanceof LivingEntity living) {
                         living.hurt(SapDamageSources.revolver(living.level(), player), 67f);
                     }
@@ -184,43 +190,60 @@ public class RevolverItem extends Item {
                     player.hurt(SapDamageSources.revolver(player.level(), player), 67f);
                 }
             }
+
+            if (level.isClientSide) {
+                final double MUZZLE_FORWARD_OFFSET = 0.95D; //barrel
+                final double MUZZLE_UP_OFFSET = -0.25D; //
+                final double HAND_RIGHT_OFFSET = 0.3125D; // right of center the hand is
+                final double HAND_DOWN_OFFSET = 0.3125D; //eye level the hand is
+
+                final float partialTicks = 1.0F;
+                Vec3 eyePos = player.getEyePosition(partialTicks);
+                Vec3 lookVec = player.getViewVector(partialTicks); // head/eye Look (forward)
+
+                float bodyYawRad = player.yBodyRot * ((float)Math.PI / 180F);
+
+                float rightYawRad = bodyYawRad + (float)Math.PI / 2.0F;
+                Vec3 bodyRightVec = Vec3.directionFromRotation(0.0F, rightYawRad * (180.0F / (float)Math.PI));
+
+                //local up vector
+                Vec3 localUpVec = lookVec.cross(bodyRightVec).normalize();
+
+                //calculate the hand pivot position (where the arm meets the body)
+                Vec3 handPivotPos = eyePos
+                        //subtract vertical offset
+                        .subtract(0, HAND_DOWN_OFFSET, 0)
+                        //add lateral offset using the rotated bodyRightVec
+                        .add(bodyRightVec.x * HAND_RIGHT_OFFSET,
+                                bodyRightVec.y * HAND_RIGHT_OFFSET,
+                                bodyRightVec.z * HAND_RIGHT_OFFSET);
+
+
+                // Move FORWARD along the LookVec (barrel length)
+                double spawnX = handPivotPos.x + (lookVec.x * MUZZLE_FORWARD_OFFSET);
+                double spawnY = handPivotPos.y + (lookVec.y * MUZZLE_FORWARD_OFFSET);
+                double spawnZ = handPivotPos.z + (lookVec.z * MUZZLE_FORWARD_OFFSET);
+
+                //apply LOCAL UPWARD OFFSET (Final adjustment using the local up vector)
+                spawnX += localUpVec.x * MUZZLE_UP_OFFSET;
+                spawnY += localUpVec.y * MUZZLE_UP_OFFSET;
+                spawnZ += localUpVec.z * MUZZLE_UP_OFFSET;
+
+                level.addParticle(SapParticles.MUZZLEFLASH_PARTICLE.get(),
+                        spawnX, spawnY, spawnZ,
+                        0.0D, 0.0D, 0.0D);
+            }
+
             level.playLocalSound(player, SapSounds.REVOLVER_SHOOT.get(), SoundSource.PLAYERS, 1f, 1f);
+            RevolverEventHandler.onRevolverShoot(player, stack);
+
+            if (RevolverEventHandler.didShoot(player)) {
+                player.setXRot(player.getXRot() - 4);
+            }
         } else {
             level.playLocalSound(player, SapSounds.REVOLVER_EMPTY.get(), SoundSource.PLAYERS, 1f, 1f);
         }
-
         advanceCylinder(stack);
         return InteractionResultHolder.consume(stack);
-    }
-
-    // ----- Hitscan ----- \\
-    public static HitResult hitscan(Player player, double maxDistance) {
-        Level level = player.level();
-        Vec3 eye = player.getEyePosition(1f);
-        Vec3 look = player.getLookAngle();
-        Vec3 reachVec = eye.add(look.scale(maxDistance));
-
-        HitResult blockHit = level.clip(new ClipContext(
-                eye,
-                reachVec,
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                player
-        ));
-
-        double blockDist = blockHit.getType() == HitResult.Type.MISS ? Double.MAX_VALUE : blockHit.getLocation().distanceTo(eye);
-
-        EntityHitResult entityHit = ProjectileUtil.getEntityHitResult(
-                level,
-                player,
-                eye,
-                reachVec,
-                player.getBoundingBox().expandTowards(look.scale(maxDistance)).inflate(1.0),
-                e -> e instanceof LivingEntity && e != player
-        );
-
-        double entityDist = entityHit == null ? Double.MAX_VALUE : entityHit.getLocation().distanceTo(eye);
-
-        return entityDist < blockDist ? entityHit : blockHit;
     }
 }

@@ -24,8 +24,7 @@ public class SapGuiElements {
         if (gunText == null) {
             gunText = create(() -> new TextElement(
                     Component.literal(""), 0xd185d6, true,
-                    Anchor.BOTTOM_CENTER, -121, 6
-            ));
+                    Anchor.BOTTOM_CENTER, bulletIcon().getOffsetX() - bulletIcon.width / 2, 6));
         }
         return gunText;
     }
@@ -34,8 +33,7 @@ public class SapGuiElements {
         if (bulletIcon == null) {
             bulletIcon = create(() -> new ItemElement(
                     new ItemStack(SapItems.BULLET.get()), 16, 16,
-                    Anchor.BOTTOM_CENTER, -102, 3
-            ));
+                    Anchor.BOTTOM_CENTER, -100, 3));
         }
         return bulletIcon;
     }

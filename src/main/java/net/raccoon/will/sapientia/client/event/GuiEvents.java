@@ -15,6 +15,9 @@ import net.raccoon.will.structura.api.gui.*;
 import net.raccoon.will.sapientia.common.item.RevolverItem;
 import net.raccoon.will.sapientia.core.Sapientia;
 import net.raccoon.will.sapientia.core.registry.SapGuiElements;
+import net.raccoon.will.structura.api.gui.elements.GuiElement;
+import net.raccoon.will.structura.api.gui.elements.ItemElement;
+import net.raccoon.will.structura.api.gui.elements.TextElement;
 import net.raccoon.will.structura.client.gui.GuiManager;
 
 @EventBusSubscriber(modid = Sapientia.MODID, value = Dist.CLIENT)
@@ -35,6 +38,9 @@ public class GuiEvents {
         SapGuiElements.gunText().setDebug(debug);
         SapGuiElements.bulletIcon().setDebug(debug);
 
+        TextElement gunText = SapGuiElements.gunText();
+        ItemElement bulletIcon = SapGuiElements.bulletIcon();
+
         RevolverItem gunItem = null;
         ItemStack gunStack = null;
 
@@ -45,22 +51,27 @@ public class GuiEvents {
             }
         }
 
-            if (gunItem == null) {
-                SapGuiElements.gunText().setVisible(false);
-                SapGuiElements.bulletIcon().setVisible(false);
+        if (gunItem == null) {
+            gunText.setVisible(false);
+            bulletIcon.setVisible(false);
         } else {
-                SapGuiElements.gunText().setVisible(true);
-                SapGuiElements.bulletIcon().setVisible(true);
+            gunText.setVisible(true);
+            bulletIcon.setVisible(true);
 
             int bullets = gunItem.getBulletCount(gunStack);
             int chambers = gunItem.getNumChambers(gunStack);
-            SapGuiElements.gunText().setText(Component.literal(bullets + "/" + chambers));
+                gunText.setText(Component.literal(bullets + "/" + chambers));
+                gunText.setElementAnchor(ElementAnchor.BOTTOM_RIGHT);
+                bulletIcon.setElementAnchor(ElementAnchor.BOTTOM_CENTER);
 
-                if (chambers >= 10) {
-                    SapGuiElements.gunText().setOffsetX(SapGuiElements.bulletIcon().getOffsetX() - 22);
-                } else {
-                    SapGuiElements.gunText().resetOffset();
-                }
+            if (player.getOffhandItem().is(gunItem)) {
+                bulletIcon.setOffsetX(bulletIcon.getOriginalOffsetX() - 29);
+                gunText.updateSize();
+                gunText.setOffsetX(bulletIcon.getOffsetX() - bulletIcon.width / 2);
+            } else {
+                bulletIcon.resetOffset();
+                gunText.resetOffset();
+            }
         }
 
         GuiManager.render(guiGraphics, screenWidth, screenHeight, event);
