@@ -15,5 +15,8 @@ public class SapItemModels extends ItemModelProvider {
     protected void registerModels() {
         basicItem(SapItems.HOME_RUNE.get());
         basicItem(SapItems.BULLET.get());
+        basicItem(SapItems.JACK_DANIELS.get());
+        basicItem(SapItems.VODKA.get());
+        basicItem(SapItems.BEER.get());
     }
 }

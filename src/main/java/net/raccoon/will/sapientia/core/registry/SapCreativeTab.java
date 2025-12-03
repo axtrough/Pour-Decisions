@@ -23,6 +23,7 @@ public class SapCreativeTab {
                         output.accept(SapBlocks.CHROMSTONE);
                         output.accept(SapItems.REVOLVER);
                         output.accept(SapItems.BULLET);
+                        output.accept(SapItems.COCKTAIL_SHAKER);
 
 
 

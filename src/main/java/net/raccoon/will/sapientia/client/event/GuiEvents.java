@@ -15,7 +15,6 @@ import net.raccoon.will.structura.api.gui.*;
 import net.raccoon.will.sapientia.common.item.RevolverItem;
 import net.raccoon.will.sapientia.core.Sapientia;
 import net.raccoon.will.sapientia.core.registry.SapGuiElements;
-import net.raccoon.will.structura.api.gui.elements.GuiElement;
 import net.raccoon.will.structura.api.gui.elements.ItemElement;
 import net.raccoon.will.structura.api.gui.elements.TextElement;
 import net.raccoon.will.structura.client.gui.GuiManager;
