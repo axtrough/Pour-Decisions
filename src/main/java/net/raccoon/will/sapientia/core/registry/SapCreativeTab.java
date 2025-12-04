@@ -17,7 +17,7 @@ public class SapCreativeTab {
     public static final Supplier<CreativeModeTab> SAPIENTIA_TAB = CREATIVE_MODE_TAB.register("sapientia_tab",
             () -> CreativeModeTab.builder()
                     .icon(() -> new ItemStack(SapItems.REVOLVER.get()))
-                    .title(Component.translatable("creativetab.sapientia.sapientia_tab"))
+                    .title(Component.translatable("itemGroup.sapientia"))
                     .displayItems((parameters, output) -> {
                         output.accept(SapItems.HOME_RUNE);
                         output.accept(SapBlocks.CHROMSTONE);
