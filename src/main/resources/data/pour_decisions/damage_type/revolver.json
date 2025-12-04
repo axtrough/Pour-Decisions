@@ -1,0 +1,7 @@
+{
+  "exhaustion": 0.0,
+  "message_id": "pour_decisions.revolver",
+  "scaling": "when_caused_by_living_non_player",
+  "bypasses_armor": true,
+  "knockback_resistance": 1.0
+}

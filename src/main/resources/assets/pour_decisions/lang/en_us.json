@@ -1,0 +1,27 @@
+{
+  "block.pour_decisions.chromstone": "Chromstone",
+
+  "item.pour_decisions.big_diamond_sword": "Big Diamond Sword",
+  "item.pour_decisions.home_rune": "Home Rune",
+  "item.pour_decisions.revolver": "Revolver",
+  "item.pour_decisions.bullet": "Bullet",
+
+  "item.pour_decisions.cocktail_shaker": "Cocktail Shaker",
+  "item.pour_decisions.jack_n_coke": "Jack & Coke",
+  "item.pour_decisions.vodka": "Vodka",
+  "item.pour_decisions.jack_daniels": "jack Daniels",
+  "item.pour_decisions.beer": "Beer",
+  "item.pour_decisions.rum": "Rum",
+  "item.pour_decisions.gin": "Gin",
+  "item.pour_decisions.cola": "Cola",
+  "item.pour_decisions.iced_tea": "Iced Tea",
+  "item.pour_decisions.sprite": "Sprite",
+  "item.pour_decisions.redbull": "RedBull",
+
+    "death.attack.pour_decisions.revolver": "%1$s was shot",
+    "death.attack.pour_decisions.revolver.player": "%1$s was shot by %2$s",
+    "death.attack.pour_decisions.revolver.self": "%1$s shot themselves",
+
+    "itemGroup.pour_decisions_tab": "Pour Decisions",
+    "key.pour_decisions.reload": "Reload Revolver"
+}

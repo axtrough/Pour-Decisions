@@ -1,0 +1,20 @@
+{
+  "revolver_shoot": {
+    "subtitle": "sounds.pour_decisions.revolver_shoot",
+    "sounds": [
+      "pour_decisions:revolver_shoot"
+    ]
+  },
+  "revolver_spin": {
+    "subtitle": "sounds.pour_decisions.revolver_spin",
+    "sounds": [
+      "pour_decisions:revolver_spin"
+    ]
+  },
+  "revolver_empty": {
+    "subtitle": "sounds.pour_decisions.revolver_empty",
+    "sounds": [
+      "pour_decisions:revolver_empty"
+    ]
+  }
+}

@@ -117,17 +117,18 @@ dependencies {
 
     //Libs
     implementation ("com.github.axtrough:Structura:e7a7ff1075")
-    implementation("maven.modrinth:blueprint:${blueprint_version}")
-    implementation("maven.modrinth:moonlight:${moonlight_lib_version}")
-    implementation("maven.modrinth:puzzles-lib:${puzzles_lib_version}")
+    runtimeOnly("maven.modrinth:starcatcher:${starcatcher_version}")
+//    compileOnly("maven.modrinth:blueprint:${blueprint_version}")
+//    compileOnly("maven.modrinth:moonlight:${moonlight_lib_version}")
+//    runtimeOnly("maven.modrinth:puzzles-lib:${puzzles_lib_version}")
     implementation("maven.modrinth:cloth-config:${cloth_config_version}")
 
 
     //Additional mods
-    implementation("maven.modrinth:clayworks:${clayworks_version}")
-    implementation("maven.modrinth:amendments:${amendments_version}")
-    implementation("maven.modrinth:supplementaries:${supplementaries_version}")
-    implementation("maven.modrinth:bountiful-blocks:${bountiful_blocks_version}")
+//    compileOnly("maven.modrinth:clayworks:${clayworks_version}")
+//    compileOnly("maven.modrinth:amendments:${amendments_version}")
+//    compileOnly("maven.modrinth:supplementaries:${supplementaries_version}")
+//    compileOnly("maven.modrinth:bountiful-blocks:${bountiful_blocks_version}")
 
     //Performance
     runtimeOnly("maven.modrinth:iris:${iris_version}")
@@ -139,9 +140,9 @@ dependencies {
     implementation("maven.modrinth:jei:${jei_version}") //19.25.0.325
     implementation("maven.modrinth:emi:${emi_version}")
     runtimeOnly("maven.modrinth:freecam:${freecam_version}")
-    runtimeOnly("maven.modrinth:clientsort:${clientsort_version}")
-    runtimeOnly("maven.modrinth:mouse-tweaks:${mousetweaks_version}")
-    runtimeOnly("maven.modrinth:fast-item-frames:${fast_item_frames_version}")
+//    runtimeOnly("maven.modrinth:clientsort:${clientsort_version}")
+//    runtimeOnly("maven.modrinth:mouse-tweaks:${mousetweaks_version}")
+//    runtimeOnly("maven.modrinth:fast-item-frames:${fast_item_frames_version}")
 
 }
 
