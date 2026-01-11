@@ -110,13 +110,18 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
+    jarJar(implementation(group: 'net.raccoon.will', name: 'structura')) {
+        version {
+                prefer '0.2.0'
+        }
+    }
     //Dependency stuff
     //compileOnly = Only usage
     //runtimeOnly = Only in-game
     //implementation = Both
 
     //Libs
-    implementation ("com.github.axtrough:Structura:e7a7ff1075")
+   //implementation ("com.github.axtrough:Structura:e7a7ff1075")
     runtimeOnly("maven.modrinth:starcatcher:${starcatcher_version}")
 //    compileOnly("maven.modrinth:blueprint:${blueprint_version}")
 //    compileOnly("maven.modrinth:moonlight:${moonlight_lib_version}")
@@ -168,18 +173,18 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 // Example configuration to allow publishing using the maven-publish plugin
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
-}
+//publishing {
+//    publications {
+//        register('mavenJava', MavenPublication) {
+//            from components.java
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "file://${project.projectDir}/repo"
+//        }
+//    }
+//}
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
